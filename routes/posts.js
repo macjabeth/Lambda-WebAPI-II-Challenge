@@ -21,4 +21,31 @@ router.post('/', async (req, res) => {
   }
 });
 
+// R - GET
+router.get('/', async (req, res) => {
+  try {
+    const posts = await db.find();
+    res.status(200).json(posts);
+  } catch (error) {
+    res.status(500).json({
+      error: `The posts information could not be retrieved; ${error}`
+    });
+  }
+});
+
+router.get('/:id', async (req, res) => {
+  const { params: { id } } = req;
+
+  try {
+    const posts = await db.findById(id);
+    Boolean(posts.length)
+      ? res.status(200).json(posts[0])
+      : res.status(404).json({ message: 'The post with the specified ID does not exist.' });
+  } catch (error) {
+    res.status(500).json({
+      error: `The post information could not be retrieved; ${error}`
+    });
+  }
+});
+
 module.exports = router;
