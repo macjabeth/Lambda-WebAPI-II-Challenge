@@ -48,4 +48,29 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+// U - PUT
+router.put('/:id', async (req, res) => {
+  const {
+    body: post,
+    params: { id }
+  } = req;
+
+  if (!post.title || !post.contents) {
+    return res.status(400).json({
+      errorMessage: 'Please provide title and contents for the post.'
+    });
+  }
+
+  try {
+    const count = await db.update(id, post);
+    Boolean(count)
+      ? res.status(200).json(await db.findById(id))
+      : res.status(404).json({ message: 'The post with the specified ID does not exist.' });
+  } catch (error) {
+    res.status(500).json({
+      error: `The post information could not be modified; ${error}`
+    });
+  }
+});
+
 module.exports = router;
